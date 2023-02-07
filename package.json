@@ -18,7 +18,9 @@
     "mui": "^0.0.1",
     "npm": "^9.4.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-audio-voice-recorder": "^1.0.4",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.1"
   },
   "devDependencies": {
     "prettier": "^2.8.3"

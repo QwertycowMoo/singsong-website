@@ -3,22 +3,20 @@ import { Link } from "gatsby"
 import { Button, Grid, Typography } from "@mui/material"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
+import CenterGrid from "../components/CenterGrid"
+import LoginForm from "../components/LoginForm"
 
 const LoginPage = () => (
-    <Grid container sx={{justifyContent: "center"}} p={2}>
-        <Grid>
-            <Typography variant="h1">
+    <Layout>
+         <CenterGrid>
+            <Typography variant="h3">
                 SingSong Login
             </Typography>
-        </Grid>
-        <Grid>
-            <Link to="/datacollect">
-                <Button size="large" variant="outlined">Continue</Button>
-            </Link>
-            
-        </Grid>
-        
-    </Grid>
+            <LoginForm/>
+        </CenterGrid>
+
+    </Layout>
+   
 
 )
 
