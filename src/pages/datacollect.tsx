@@ -1,72 +1,69 @@
 import * as React from "react"
-import { useState } from "react"
-import { Button, Grid, Typography } from "@mui/material"
+import { useState, useEffect } from "react"
+import {Typography } from "@mui/material"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import { AudioRecorder } from "react-audio-voice-recorder"
 import { navigate } from "gatsby"
 import CenterGrid from "../components/CenterGrid"
-import Phrase from "../components/Phrase"
 
-import saveInstructions from "../images/saveInstructions.png"
-import phraseExample from "../images/phraseExample.png"
+import Tutorial from "../components/Tutorial"
+import DataEntry from "../components/DataEntry"
+import StartingPitch from "../components/StartingPitch"
+import Metronome from "../components/Metronome"
 
 function DataCollectPage(props) {
-    const [showTutorial, setShowTutorial] = useState(true)
     const [urlBlob, setUrlBlob] = useState("")
-    const handleFinishClicked = () => {
-        navigate("/summary")
-    }
-
-    const addAudioElement = (blob) => {
-        const url = URL.createObjectURL(blob)
-        setUrlBlob(url)
-        console.log(urlBlob)
-        const audio = document.createElement("audio")
-        audio.src = urlBlob;
-        audio.controls = true;
-        document.body.appendChild(audio);
-      };
-
+    const [metronome, setMetronome] = useState(false)
+    const [showTutorial, setShowTutorial] = useState(true)
+    
     const handleCloseTutorial = () => {
         setShowTutorial(false)
     }
 
+    const handleFinishClicked = () => {
+        navigate("/summary")
+    }
+
+    const setAudioElement = (blob) => {
+        const url = URL.createObjectURL(blob)
+        setUrlBlob(url) 
+    };
+
+    useEffect(() => {
+        // Updates the url blob of the audio element
+        console.log(urlBlob)
+    }, [urlBlob])
+    
+    //TODO: Create a Metronome Element
+    const toggleMetronome = () => {
+        setMetronome(!metronome)
+    }
+    //TODO: Link files recorded to the summary page
     return (
         <Layout>
             <CenterGrid>
+                <Typography variant="h1">
+                    SingSong
+                </Typography>
                 {showTutorial ?
                 <>
-                <Typography variant="h3">
-                Hello {props.location.state?.name}!
-                </Typography>
-                <Typography variant="body1" paragraph={true} textAlign="center">
-                    The first thing you'll see is a phrase of music. If you see any numbers, just ignore them, they're for us to keep track of phrases.
-                </Typography>
-                <img src={phraseExample}/>
-                <Typography variant="body1" paragraph={true} textAlign="center">
-                    To start recording, click the microphone button. When done, click the save icon on the top left of the recording box.
-                </Typography>
-                <img src={saveInstructions}/>
-                <Typography variant="body1" paragraph={true} textAlign="center">
-                    Listen back to your recording, and retry if you need to. We want to get results as accurate as possible, so we really appreciate your time getting things right!
-                </Typography>
-                <Button size="large" variant="outlined" onClick={handleCloseTutorial}>Let's Go!</Button>
+                    <Tutorial name={props.location.state?.name} closeTutorial={handleCloseTutorial}/>
                 </>
                 :
-                <>
-                <Phrase></Phrase>
-                <AudioRecorder onRecordingComplete={(blob) => addAudioElement(blob)}></AudioRecorder>
-                {/* Use Wavesurfer.js to visualize and playback audio? */}
-                <Button size="large" variant="outlined" onClick={handleFinishClicked}>Finish</Button>
-                </>
-                }
-                
-                
+                    <>
+                    <StartingPitch
+                    startingPitch="G#"/>
+                    <Metronome
+                    setMetronome={setMetronome}
+                    metronome={metronome}/>
+                    <DataEntry
+                        urlBlob={urlBlob}
+                        setBlob={setAudioElement}
+                        finish={handleFinishClicked}
+                        setMetronome={setMetronome}/>
+                    </>
+                }   
             </CenterGrid>
-        
-                
-
         </Layout>
         
     
