@@ -55,7 +55,8 @@ function DataCollectPage(props) {
                     startingPitch="G#"/>
                     <Metronome
                     setMetronome={setMetronome}
-                    metronome={metronome}/>
+                    metronome={metronome}
+                    bpm={72}/>
                     <DataEntry
                         urlBlob={urlBlob}
                         setBlob={setAudioElement}
