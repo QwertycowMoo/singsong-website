@@ -26,7 +26,6 @@ function LoginForm() {
 
     };
     const onFormSubmit = (data: any) => {
-        console.log(data)
         if (data["Name"]) {
             navigate("/datacollect", {state: {name: data["Name"]}})
         }

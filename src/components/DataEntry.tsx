@@ -1,26 +1,33 @@
 import { Typography, Button } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { AudioRecorder } from "react-audio-voice-recorder"
-import Phrase from "./Phrase"
+import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder"
 
 interface DataEntryProps {
     urlBlob: string,
     setBlob(blob): any
-    finish(): any
-    setMetronome: any //TODO: Check if this is still ok to do, may not actually call the function
+    phraseImage: any,
+    setMetronome: any
+    setMetronomeDisabled: any
 }
-function DataEntry ({urlBlob, setBlob, finish, setMetronome}: DataEntryProps) { 
-    //TODO: Make the metronome stop when you start the recording
+function DataEntry ({urlBlob, setBlob, phraseImage, setMetronome, setMetronomeDisabled}: DataEntryProps) { 
+    const recordingControls = useAudioRecorder()
+
+    useEffect(()=> {
+        if (recordingControls.isRecording) {
+            setMetronome(false)
+            setMetronomeDisabled(true)
+        }
+    })
     return (
         <>
-        <Phrase></Phrase>
-        <AudioRecorder onRecordingComplete={(blob) => setBlob(blob)}></AudioRecorder>
+        <img src={phraseImage}/>
+        <AudioRecorder onRecordingComplete={(blob) => {setBlob(blob); setMetronomeDisabled(false)}}
+        recorderControls={recordingControls}/>
         <audio controls src={urlBlob}></audio>
         <Typography variant="body1">
             Made a mistake? Just click the microphone again to rerecord!
         </Typography>
-        <Button size="large" variant="outlined" onClick={finish}>I'm Happy, Submit Phrase</Button>
         </>
     )
 }

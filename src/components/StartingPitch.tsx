@@ -22,7 +22,8 @@ function StartingPitch ({startingPitch}: StartingPitchProps) {
     const AudioEl = useRef<HTMLAudioElement>(null)
     const [note, setNote] = useState()
     useEffect(() => {
-        //set the audio when first rendered
+        //set the audio note changes
+        console.log("Starting Pitch useEffect called")
         switch (startingPitch) {
             case "A":
                 setNote(PianoA)
@@ -61,16 +62,17 @@ function StartingPitch ({startingPitch}: StartingPitchProps) {
                 setNote(PianoGs)
                 break;
         }
-    }, [])
+    }, [startingPitch])
 
     const handleStartingPitchClick = () => {
+        console.log("current starting pitch:", startingPitch)
         AudioEl.current?.load()
         AudioEl.current?.play()
     }
     return (
         <>
         <Button variant="outlined" onClick={handleStartingPitchClick}>
-            Play Starting Pitch
+            Play Starting Pitch {startingPitch}
         </Button>
         <audio ref={AudioEl} src={note}></audio>
         </>

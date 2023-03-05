@@ -1,44 +1,92 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
-import {Typography } from "@mui/material"
+import {Button, Typography } from "@mui/material"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import { navigate } from "gatsby"
-import CenterGrid from "../components/CenterGrid"
+import {v4 as uuidv4} from "uuid"
 
+import CenterGrid from "../components/CenterGrid"
 import Tutorial from "../components/Tutorial"
 import DataEntry from "../components/DataEntry"
 import StartingPitch from "../components/StartingPitch"
 import Metronome from "../components/Metronome"
+import { sendAudio } from "../api/SendAudio"
+// Large amount of importing pictures
+import Phrase1 from "../images/phrases/Phrase1_C_100.png"
+import Phrase2 from "../images/phrases/Phrase2_D_120.png"
+import Phrase3 from "../images/phrases/Phrase3_A_160.png"
+
+// Also create parallel arrays for the data so that starting pitch, metronome val, all line up
+const phrases = [Phrase1, Phrase2, Phrase3]
+const startPitches = ["C", "D", "A"]
+const tempos = [100, 120, 160]
 
 function DataCollectPage(props) {
     const [urlBlob, setUrlBlob] = useState("")
-    const [metronome, setMetronome] = useState(false)
+    const [metronome, setMetronome] = useState(false) // Whether it is on or not, not the bpm
+    const [metronomeDisabled, setMetronomeDisabled] = useState(false)
     const [showTutorial, setShowTutorial] = useState(true)
-    
-    const handleCloseTutorial = () => {
-        setShowTutorial(false)
-    }
 
-    const handleFinishClicked = () => {
-        navigate("/summary")
-    }
+    const [phraseImg, setPhraseImg] = useState(null)
+    const [startingPitch, setStartingPitch] = useState("")
+    const [bpm, setBpm] = useState(60)
+    const [index, setIndex] = useState(0)
+    
+    //On componenent load
+    useEffect(() => {
+        refreshPhrase()
+    }, [])
 
     const setAudioElement = (blob) => {
         const url = URL.createObjectURL(blob)
         setUrlBlob(url) 
     };
-
-    useEffect(() => {
-        // Updates the url blob of the audio element
-        console.log(urlBlob)
-    }, [urlBlob])
-    
-    //TODO: Create a Metronome Element
-    const toggleMetronome = () => {
-        setMetronome(!metronome)
+   
+    const refreshPhrase = () => {
+        const i = Math.floor(Math.random() * phrases.length)
+        setIndex(i)
+        console.log(i, tempos[i], startPitches[i])
+        setPhraseImg(phrases[i])
+        setBpm(tempos[i])
+        setStartingPitch(startPitches[i])
     }
-    //TODO: Link files recorded to the summary page
+
+    const handleCloseTutorial = () => {
+        setShowTutorial(false)
+    }
+
+    const handleFinishClicked = () => {
+        // navigate("/summary")
+        // Call Api to send information
+        // Restart with a new phrase
+        // Update Starting Pitch and Metronome
+    }
+
+    const handleSubmitPhrase = async () => {
+        // Get information from blob url
+        let blob = fetch(urlBlob).then((res) => {
+            return res.blob()
+        })
+        const uuid = uuidv4()
+        const filename = props.location.state?.name + "_" + index + "_" + startPitches[index] + "_" + tempos[index] + "_" + uuid
+        console.log(filename)
+        const data = new FormData();
+        data.append("file", await blob, filename + ".ogg")
+        const success = await sendAudio(data)
+        if (success) {
+            refreshPhrase()
+            
+            
+        } else {
+            console.log("Did not succeed")
+        }
+       
+    }
+
+    
+
+    
     return (
         <Layout>
             <CenterGrid>
@@ -52,16 +100,22 @@ function DataCollectPage(props) {
                 :
                     <>
                     <StartingPitch
-                    startingPitch="G#"/>
+                    startingPitch={startingPitch}/>
                     <Metronome
                     setMetronome={setMetronome}
                     metronome={metronome}
-                    bpm={72}/>
+                    bpm={bpm}
+                    disabled={metronomeDisabled}/>
                     <DataEntry
                         urlBlob={urlBlob}
                         setBlob={setAudioElement}
-                        finish={handleFinishClicked}
-                        setMetronome={setMetronome}/>
+                        phraseImage={phraseImg}
+                        setMetronome={setMetronome}
+                        setMetronomeDisabled={setMetronomeDisabled}/>
+                    
+                    <Button size="large" variant="outlined" onClick={handleSubmitPhrase}>I'm Happy, Submit Phrase</Button>
+
+                    <Button size="large" variant="outlined" onClick={handleFinishClicked}>Done with data collection?</Button>
                     </>
                 }   
             </CenterGrid>

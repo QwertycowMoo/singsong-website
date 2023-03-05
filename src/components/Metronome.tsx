@@ -8,20 +8,21 @@ import bpm120 from "../audio/metronome/120bpm.wav"
 import bpm144 from "../audio/metronome/144bpm.wav"
 import bpm160 from "../audio/metronome/160bpm.wav"
 import bpm200 from "../audio/metronome/200bpm.wav"
-import PianoA from "../audio/piano/piano_a.wav"
 import { useEffect, useRef, useState } from "react"
 import { Box } from "@mui/system"
 
 interface MetronomeProps {
     setMetronome(boolean): any,
     metronome: boolean,
-    bpm: number
+    bpm: number,
+    disabled: boolean
 }
 
-const Metronome = ({setMetronome, metronome, bpm}: MetronomeProps) => {
+const Metronome = ({setMetronome, metronome, bpm, disabled}: MetronomeProps) => {
     const AudioEl = useRef<HTMLAudioElement>(null)
     const [metronomeVal, setMetronomeVal] = useState()
     useEffect(() => {
+        console.log("useEffect " + metronome + bpm)
         //set the audio when first rendered
         switch (bpm) {
             case 72:
@@ -46,19 +47,21 @@ const Metronome = ({setMetronome, metronome, bpm}: MetronomeProps) => {
                 setMetronomeVal(bpm200)
                 break;
         }
-    }, [])
+    }, [bpm])
 
-    const toggleMetronome = () => {
-        setMetronome(!metronome)
-        if (!metronome){
+    // UseEffect must be used since we are changing state, and that happens asynchronously
+    useEffect(() => {
+        if (metronome){
             AudioEl.current?.load()
             AudioEl.current?.play()
         } else {
             AudioEl.current?.pause()
             AudioEl.current?.load()
         }
-            
-        
+    }, [metronome])
+
+    const toggleMetronome = () => {
+        setMetronome(!metronome)
     }
 
     return (
@@ -70,10 +73,12 @@ const Metronome = ({setMetronome, metronome, bpm}: MetronomeProps) => {
             <Typography variant="body1" m={1}>{bpm} bpm</Typography>
             <Button 
             onClick={toggleMetronome}
-            variant="outlined">
+            variant="outlined"
+            disabled={disabled}>
                 {metronome? "Stop" : "Play" } Metronome
             </Button>
             <audio ref={AudioEl} src={metronomeVal}></audio>
+           
         </Box>
     )
 }
