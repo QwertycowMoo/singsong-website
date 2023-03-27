@@ -40,7 +40,8 @@ function DataCollectPage(props) {
 
     const setAudioElement = (blob) => {
         const url = URL.createObjectURL(blob)
-        setUrlBlob(url) 
+        setUrlBlob(url)
+        console.log(url)
     };
    
     const refreshPhrase = () => {
@@ -63,21 +64,24 @@ function DataCollectPage(props) {
         // Update Starting Pitch and Metronome
     }
 
+    
+
     const handleSubmitPhrase = async () => {
         // Get information from blob url
-        let blob = fetch(urlBlob).then((res) => {
+        let blob = await fetch(urlBlob).then((res) => {
             return res.blob()
         })
+        // saveBlob(await blob, "blob")
         const uuid = uuidv4()
         const filename = props.location.state?.name + "_" + index + "_" + startPitches[index] + "_" + tempos[index] + "_" + uuid
-        console.log(filename)
         const data = new FormData();
-        data.append("file", await blob, filename + ".ogg")
-        const success = await sendAudio(data)
+
+        data.append("file", blob, filename + ".wav")
+        console.log("This is the data", data)
+
+        const success = await sendAudio(data, filename)
         if (success) {
             refreshPhrase()
-            
-            
         } else {
             console.log("Did not succeed")
         }
