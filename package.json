@@ -1,9 +1,9 @@
 {
-  "name": "gatsby-starter-default",
+  "name": "Singsong",
   "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
+  "description": "Project by Kevin Zhou",
   "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Kevin Zhou <kjzhou2@illinois.edu>",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
