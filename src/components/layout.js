@@ -11,6 +11,9 @@ import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
 import "./layout.css"
 
+import { Typography } from "@mui/material"
+import ACMLogo from "../images/sp23-acm-diamond-blue.png"
+
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -42,6 +45,13 @@ const Layout = ({ children }) => {
           © {new Date().getFullYear()} &middot; Built with
           {` `}
           <a href="https://www.gatsbyjs.com">Gatsby</a>
+        <Typography>{"Sponsored by "}
+            <img
+            alt="ACM logo"
+            height={20}
+            style={{ margin: 0 }}
+            src={ACMLogo}/>
+        </Typography>
         </footer>
       </div>
     </>

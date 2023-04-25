@@ -20,6 +20,7 @@ const Header = ({ siteTitle }) => (
     >
       {siteTitle}
     </Link>
+    
     <img
       alt="Gatsby logo"
       height={20}
